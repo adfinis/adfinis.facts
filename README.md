@@ -8,7 +8,18 @@ Collection for custom Adfinis ansible facts plugins
 
 ## Using this collection
 
-<!--Include some quick examples that cover the most common use cases for your collection content. It can include the following examples of installation and upgrade (change NAMESPACE.COLLECTION_NAME correspondingly):-->
+Usage examples for the individual fact plugins included:
+
+### timer_facts
+
+```yaml
+- name: Populate timer facts
+  adfinis.facts.timer_facts:
+
+- name: Print timer facts
+  ansible.builtin.debug:
+    var: aadfinis.factsmers
+```
 
 ### Installing the Collection from Ansible Galaxy
 
