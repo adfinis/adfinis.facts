@@ -39,6 +39,7 @@ notes:
   - AIX SRC was added in version 2.11.
 author:
   - Adam Miller (@maxamillion)
+  - Adfinis AG
 '''
 
 EXAMPLES = r'''
