@@ -47,3 +47,8 @@ ansible-galaxy collection install adfinis.facts:==0.1.0
 ```
 
 See [Ansible Using collections](https://docs.ansible.com/ansible/devel/user_guide/collections_using.html) for more details.
+
+### Contributing to this collection
+
+Once you have done some work, please test the collection locally using molecule.
+To install it locally, use `ansible-galaxy collection build` and install the resulting `tar.gz` file.
