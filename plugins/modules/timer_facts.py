@@ -16,7 +16,7 @@ short_description: Return timer state information as fact data
 description:
      - Return timer state information as fact data for various timer management utilities.
 version_added: "2.5"
-requirements: ["Any of the following supported init systems: systemd, sysv, upstart, openrc, AIX SRC"]
+requirements: ["systemd"]
 extends_documentation_fragment:
   -  action_common_attributes
   -  action_common_attributes.facts
@@ -81,7 +81,7 @@ ansible_facts:
           description:
           - State of the timer.
           - Either C(enabled), C(disabled), C(static), C(indirect) or C(unknown).
-          returned: systemd systems or RedHat/SUSE flavored sysvinit/upstart or OpenBSD
+          returned: systemd systems
           type: str
           sample: enabled
         name:
