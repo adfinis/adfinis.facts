@@ -18,7 +18,7 @@ Usage examples for the individual fact plugins included:
 
 - name: Print timer facts
   ansible.builtin.debug:
-    var: aadfinis.factsmers
+    var: ansible_facts.timers
 ```
 
 ### Installing the Collection from Ansible Galaxy
