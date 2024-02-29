@@ -47,13 +47,13 @@ ansible_facts:
         - file: /etc/apt/sources.list.d/debian.sources
           types: [deb, deb-src]
           uri: http://deb.debian.org/debian
-          dist: boomworm
+          suites: [boomworm, bookworm_updates]
           components: [main, non-free-firmware]
           architectures: []
         - file: /etc/apt/sources.list.d/debian.sources
           types: [deb, deb-src]
           uri: http://security.debian.org/debian-security
-          dist: bookworm-security
+          suites: [bookworm-security]
           components: [main, non-free-firmware]
           architectures: []
       contains:
@@ -75,11 +75,14 @@ ansible_facts:
           returned: always
           type: str
           sample: http://deb.debian.org/debian
-        dist:
-          description: Name of the distribution of the repository.
+        suites:
+          description: Name of the suites of the repository.
           returned: always
-          type: str
-          sample: stable
+          type: list
+          elements: str
+          sample:
+            - bookworm
+            - bookworm-updates
         components:
           description: Enabled components of the repository.
           returned: always
@@ -131,8 +134,8 @@ def main():
             source_entry = dict(
                 filename=source.file,
                 types=source.types,
-                url=source.uri,
-                dist=source.dist,
+                uri=source.uri,
+                suites=source.suites,
                 components=source.comps,
                 architectures=source.architectures
             )
@@ -143,8 +146,8 @@ def main():
             source_entry = dict(
                 filename=source.file,
                 types=[source.type],
-                url=source.uri,
-                dist=source.dist,
+                uri=source.uri,
+                suites=[source.dist],
                 components=source.comps,
                 architectures=source.architectures
             )

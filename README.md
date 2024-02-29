@@ -4,7 +4,8 @@ Collection for custom Adfinis ansible facts plugins
 
 ## Included content
 
-* timer_facts: slightly modified `service_facts` plugin to support timer units
+* `timer_facts`: slightly modified `service_facts` plugin to support timer units
+* `apt_sources_facts`: Gather facts about configured sources for Debian's APT.  Supports both the sources.list and the deb822 formats.
 
 ## Using this collection
 
