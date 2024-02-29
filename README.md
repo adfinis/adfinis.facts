@@ -21,6 +21,17 @@ Usage examples for the individual fact plugins included:
     var: ansible_facts.timers
 ```
 
+### apt_sources_facts
+
+```yaml
+- name: Populate apt sources facts
+  adfinis.facts.apt_sources_facts:
+
+- name: Print apt sources facts
+  ansible.builtin.debug:
+    var: ansible_facts.apt_sources
+```
+
 ### Installing the Collection from Ansible Galaxy
 
 Before using this collection, you need to install it with the Ansible Galaxy command-line tool:
