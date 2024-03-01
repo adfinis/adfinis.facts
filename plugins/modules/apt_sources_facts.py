@@ -127,10 +127,10 @@ def main():
     for source in sources:
         if not source.type:
             continue
+        # Don't include disabled entries (commented out in sources.list or "Disabled" in deb822)
+        if source.disabled:
+            continue
         if isinstance(source, Deb822SourceEntry):
-            # Don't include disabled entries
-            if source.disabled:
-                continue
             source_entry = dict(
                 filename=source.file,
                 types=source.types,
