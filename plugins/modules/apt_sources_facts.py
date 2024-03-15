@@ -108,7 +108,7 @@ def main():
 
     # Import the sourceslist module from python-apt; emit a warning and exit if not possible.
     try:
-        from aptsources.sourceslist import SourcesList, Deb822SourceEntry
+        from aptsources.sourceslist import SourcesList
     except ImportError:
         warnings = [
             'adfinis.facts.apt_sources_facts was invoked on a system that is missing the python3-apt or python-apt ' +
@@ -117,11 +117,20 @@ def main():
         results = dict(ansible_facts=dict(apt_sources=list()))
         module.exit_json(warnings=warnings, **results)
 
+    # Deb822SourceEntry is only available on systems that already support the deb822 .sources format
+    try:
+        from aptsources.sourceslist import Deb822SourceEntry
+        deb822 = True
+    except ImportError:
+        deb822 = False
+
     # Load all .list and .sources files
     sources = SourcesList()
     for ent in os.listdir(SOURCES_LIST_DIRECTORY):
         filename = os.path.join(SOURCES_LIST_DIRECTORY, ent)
-        if ent.endswith('.sources') or ent.endswith('.list'):
+        if ent.endswith('.list'):
+            sources.load(filename)
+        elif deb822 and ent.endswith('.sources'):
             sources.load(filename)
 
     # Iterate both .list and .sources and convert their contents into a unified dict structure
@@ -132,7 +141,7 @@ def main():
         # Don't include disabled entries (commented out in sources.list or "Disabled" in deb822)
         if source.disabled:
             continue
-        if isinstance(source, Deb822SourceEntry):
+        if deb822 and isinstance(source, Deb822SourceEntry):
             source_entry = dict(
                 filename=source.file,
                 types=source.types,
