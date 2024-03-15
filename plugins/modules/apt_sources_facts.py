@@ -101,6 +101,9 @@ ansible_facts:
 '''
 
 
+SOURCES_LIST_DIRECTORY = '/etc/apt/sources.list.d'
+
+
 def main():
     module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 
@@ -109,7 +112,7 @@ def main():
         from aptsources.sourceslist import SourcesList, Deb822SourceEntry, SourceEntry
     except ImportError:
         warnings = [
-            'adfinis.facts.apt_sources_facts was invoked on a system that is missing the python3-apt or python-apt' +
+            'adfinis.facts.apt_sources_facts was invoked on a system that is missing the python3-apt or python-apt ' +
             'package.  ansible_facts.apt_sources will be empty.'
         ]
         results = dict(ansible_facts=dict(apt_sources=list()))
@@ -117,8 +120,8 @@ def main():
 
     # Load all .list and .sources files
     sources = SourcesList()
-    for ent in os.listdir('/etc/apt/sources.list.d'):
-        filename = os.path.join('/etc/apt/sources.list.d', ent)
+    for ent in os.listdir(SOURCES_LIST_DIRECTORY):
+        filename = os.path.join(SOURCES_LIST_DIRECTORY, ent)
         if ent.endswith('.sources') or ent.endswith('.list'):
             sources.load(filename)
 
@@ -137,7 +140,7 @@ def main():
                 uri=source.uri,
                 suites=source.suites,
                 components=source.comps,
-                architectures=source.architectures
+                architectures=source.architectures,
             )
         else:
             # SourcesList appears to return empty lines and comments as well
@@ -149,7 +152,7 @@ def main():
                 uri=source.uri,
                 suites=[source.dist],
                 components=source.comps,
-                architectures=source.architectures
+                architectures=source.architectures,
             )
         apt_sources.append(source_entry)
     results = dict(ansible_facts=dict(apt_sources=apt_sources))
