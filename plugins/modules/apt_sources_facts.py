@@ -2,7 +2,6 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
-from ansible.module_utils.common.locale import get_best_parsable_locale
 from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
 
@@ -109,7 +108,7 @@ def main():
 
     # Import the sourceslist module from python-apt; emit a warning and exit if not possible.
     try:
-        from aptsources.sourceslist import SourcesList, Deb822SourceEntry, SourceEntry
+        from aptsources.sourceslist import SourcesList, Deb822SourceEntry
     except ImportError:
         warnings = [
             'adfinis.facts.apt_sources_facts was invoked on a system that is missing the python3-apt or python-apt ' +
