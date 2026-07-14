@@ -6,7 +6,7 @@ Collection for custom Adfinis ansible facts plugins
 
 * `timer_facts`: slightly modified `service_facts` plugin to support timer units
 * `apt_sources_facts`: Gather facts about configured sources for Debian's APT.  Supports both the sources.list and the deb822 formats.
-* `tlsref_facts`: gather recommended TLS configuration from tlsref.org (formerly ssl-config.mozilla.org) and register as facts.
+* `tlsref_facts`: gather recommended TLS configuration from tlsref.org (formerly ssl-config.mozilla.org) and register it as a fact.
 
 ## Using this collection
 
