@@ -34,7 +34,7 @@ Usage examples for the individual fact plugins included:
     var: ansible_facts.apt_sources
 ```
 
-### tlsef_facts
+### tlsref_facts
 
 ```yaml
 - name: Gather the TLSRef reference configuration
