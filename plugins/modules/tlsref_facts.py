@@ -9,7 +9,7 @@ short_description: Lookup recommended TLS configuration from tlsref.org.
 description:
   - Lookup recommended TLS configuration from tlsref.org (formerly ssl-config.mozilla.org).
   - By default, uses the latest config.  Using a fixed version is recommended.
-  - Registers the response as C(tlsref_facts).
+  - Registers the response as C(ansible_facts.tlsref).
 version_added: 1.0.3
 author: Adfinis AG
 options:
@@ -23,7 +23,7 @@ attributes:
   check_mode:
     support: full
   diff_mode:
-    support: full
+    support: none
   platform:
     platforms: posix
 '''
@@ -56,8 +56,8 @@ ansible_facts:
         version: 6.0
         href: "https://data.tlsref.org/guidelines/6.0.json"
         configurations:
-        modern: ...
-        intermediate ...
+          modern: ...
+          intermediate ...
 '''
 
 
