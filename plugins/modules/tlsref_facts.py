@@ -1,21 +1,13 @@
 # Copyright 2026, Adfinis AG
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-from ansible.module_utils.basic import AnsibleModule
-__metaclass__ = type
-
-
-import json
-import urllib.request
-
 
 DOCUMENTATION = r'''
 ---
 module: tlsref_facts
 short_description: Lookup recommended TLS configuration from tlsref.org.
 description:
-  - Lookup recommended tls configuration from tlsref.org (formerly ssl-config.mozilla.org).
+  - Lookup recommended TLS configuration from tlsref.org (formerly ssl-config.mozilla.org).
   - By default, uses the latest config.  Using a fixed version is recommended.
   - Registers the response as C(tlsref_facts).
 version_added: 1.0.3
@@ -23,7 +15,7 @@ author: Adfinis AG
 options:
   version:
     description:
-      - The version of the tlsref configuration to fetch, e.g. C(6.0).
+      - The version of the TLSRref configuration to fetch, e.g. C(6.0).
       - Defaults to C(latest).
     type: str
     default: latest
@@ -67,6 +59,11 @@ ansible_facts:
         modern: ...
         intermediate ...
 '''
+
+
+from ansible.module_utils.basic import AnsibleModule
+import json
+import urllib.request
 
 
 def main():
