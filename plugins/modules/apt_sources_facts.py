@@ -6,6 +6,7 @@ from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
 
 import os
+import requests
 
 from urllib.parse import urlsplit
 from urllib.request import url2pathname
@@ -127,6 +128,20 @@ def resolve_apt_uri(uri: str) -> str:
                     continue
                 # Assuming only one mirror per URI we don't care about metadata
                 return line.split()[0]
+        if parsed.scheme in ("mirror+http", "mirror+https", "mirror"):
+            target_scheme = "http" if parsed.scheme == "mirror" else parsed.scheme[len("mirror+"):]
+            # Reconstruct the remote URL without the 'mirror+' prefix
+            remote_url = f"{target_scheme}://{parsed.netloc}{parsed.path}"    
+            try:
+                r = requests.get(remote_url)
+                for line in r.text:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    # Assuming only one mirror per URI we don't care about metadata
+                    return line.split()[0]
+            except requests.exceptions.HTTPError:
+                return uri
     return uri
 
 
