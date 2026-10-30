@@ -6,7 +6,10 @@ from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
 
 import os
+import requests
 
+from urllib.parse import urlsplit
+from urllib.request import url2pathname
 
 DOCUMENTATION = r'''
 ---
@@ -103,6 +106,45 @@ ansible_facts:
 SOURCES_LIST_DIRECTORY = '/etc/apt/sources.list.d'
 
 
+def resolve_apt_uri(uri: str) -> str:
+    """
+    Resolve mirror links in the URI field to get a fully valid deb source entry 
+    """
+    if not uri:
+        return ""
+
+    parsed = urlsplit(uri)
+    # Lookup the mirror file in the URI
+    if parsed.scheme == "mirror+file":
+        mirror_file_path = url2pathname(parsed.path)
+        if not os.path.isfile(mirror_file_path):
+            # If the mirror file does not exist, return the URI definition as is
+            return uri
+        with open(mirror_file_path, "r", encoding="utf-8") as f:
+            # Parse mirror file by skipping any empty line and comment
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                # Assuming only one mirror per URI we don't care about metadata
+                return line.split()[0]
+        if parsed.scheme in ("mirror+http", "mirror+https", "mirror"):
+            target_scheme = "http" if parsed.scheme == "mirror" else parsed.scheme[len("mirror+"):]
+            # Reconstruct the remote URL without the 'mirror+' prefix
+            remote_url = f"{target_scheme}://{parsed.netloc}{parsed.path}"    
+            try:
+                r = requests.get(remote_url)
+                for line in r.text.splitlines():
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    # Assuming only one mirror per URI we don't care about metadata
+                    return line.split()[0]
+            except requests.exceptions.HTTPError:
+                return uri
+    return uri
+
+
 def main():
     module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
 
@@ -145,7 +187,7 @@ def main():
             source_entry = dict(
                 filename=source.file,
                 types=source.types,
-                uri=source.uri,
+                uri=resolve_apt_uri(source.uri),
                 suites=source.suites,
                 components=source.comps,
                 architectures=source.architectures,
@@ -157,7 +199,7 @@ def main():
             source_entry = dict(
                 filename=source.file,
                 types=[source.type],
-                uri=source.uri,
+                uri=resolve_apt_uri(source.uri),
                 suites=[source.dist],
                 components=source.comps,
                 architectures=source.architectures,
