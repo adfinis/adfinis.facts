@@ -134,7 +134,7 @@ def resolve_apt_uri(uri: str) -> str:
             remote_url = f"{target_scheme}://{parsed.netloc}{parsed.path}"    
             try:
                 r = requests.get(remote_url)
-                for line in r.text:
+                for line in r.text.splitlines():
                     line = line.strip()
                     if not line or line.startswith("#"):
                         continue
