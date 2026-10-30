@@ -57,12 +57,6 @@ ansible_facts:
           suites: [bookworm-security]
           components: [main, non-free-firmware]
           architectures: []
-        - file: /etc/apt/sources.list.d/debian.sources
-          types: [deb, deb-src]
-          uri: mirror+file:///etc/apt/mirrors/debian-security.list
-          suites: [bookworm-security]
-          components: [main, non-free-firmware]
-          architectures: []
       contains:
         file:
           description: Name of the file this entry was found in.
@@ -110,6 +104,7 @@ ansible_facts:
 
 SOURCES_LIST_DIRECTORY = '/etc/apt/sources.list.d'
 
+
 def resolve_apt_uri(uri: str) -> str:
     """
     Resolve mirror links in the URI field to get a fully valid deb source entry 
@@ -133,6 +128,7 @@ def resolve_apt_uri(uri: str) -> str:
                 # Assuming only one mirror per URI we don't care about metadata
                 return line.split()[0]
     return uri
+
 
 def main():
     module = AnsibleModule(argument_spec=dict(), supports_check_mode=True)
