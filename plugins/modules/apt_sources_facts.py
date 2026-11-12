@@ -6,7 +6,7 @@ from ansible.module_utils.basic import AnsibleModule
 __metaclass__ = type
 
 import os
-import requests
+from ansible.module_utils.urls import fetch_url
 
 from urllib.parse import urlsplit
 from urllib.request import url2pathname
@@ -106,7 +106,7 @@ ansible_facts:
 SOURCES_LIST_DIRECTORY = '/etc/apt/sources.list.d'
 
 
-def resolve_apt_uri(uri: str) -> str:
+def resolve_apt_uri(module: AnsibleModule, uri: str) -> str:
     """
     Resolve mirror links in the URI field to get a fully valid deb source entry 
     """
@@ -133,15 +133,15 @@ def resolve_apt_uri(uri: str) -> str:
             # Reconstruct the remote URL without the 'mirror+' prefix
             remote_url = f"{target_scheme}://{parsed.netloc}{parsed.path}"    
             try:
-                r = requests.get(remote_url)
-                for line in r.text.splitlines():
+                resp, info = fetch_url(module, remote_url)
+                if info['status'] >= 400:
+                    return uri
+                for line in resp.read().splitlines():
                     line = line.strip()
                     if not line or line.startswith("#"):
                         continue
                     # Assuming only one mirror per URI we don't care about metadata
                     return line.split()[0]
-            except requests.exceptions.HTTPError:
-                return uri
     return uri
 
 
@@ -187,7 +187,7 @@ def main():
             source_entry = dict(
                 filename=source.file,
                 types=source.types,
-                uri=resolve_apt_uri(source.uri),
+                uri=resolve_apt_uri(module, source.uri),
                 suites=source.suites,
                 components=source.comps,
                 architectures=source.architectures,
@@ -199,7 +199,7 @@ def main():
             source_entry = dict(
                 filename=source.file,
                 types=[source.type],
-                uri=resolve_apt_uri(source.uri),
+                uri=resolve_apt_uri(module, source.uri),
                 suites=[source.dist],
                 components=source.comps,
                 architectures=source.architectures,
