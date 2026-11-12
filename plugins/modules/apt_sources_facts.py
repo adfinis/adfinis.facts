@@ -132,16 +132,15 @@ def resolve_apt_uri(module: AnsibleModule, uri: str) -> str:
             target_scheme = "http" if parsed.scheme == "mirror" else parsed.scheme[len("mirror+"):]
             # Reconstruct the remote URL without the 'mirror+' prefix
             remote_url = f"{target_scheme}://{parsed.netloc}{parsed.path}"    
-            try:
-                resp, info = fetch_url(module, remote_url)
-                if info['status'] >= 400:
-                    return uri
-                for line in resp.read().splitlines():
-                    line = line.strip()
-                    if not line or line.startswith("#"):
-                        continue
-                    # Assuming only one mirror per URI we don't care about metadata
-                    return line.split()[0]
+            resp, info = fetch_url(module, remote_url)
+            if info['status'] >= 400:
+                return uri
+            for line in resp.read().splitlines():
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                # Assuming only one mirror per URI we don't care about metadata
+                return line.split()[0]
     return uri
 
 
